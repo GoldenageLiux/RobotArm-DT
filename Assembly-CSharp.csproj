@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{361331D7-A690-A2EB-ACE7-6457FA1BF403}</ProjectGuid>
+    <ProjectGuid>{8561F630-C099-F49E-F76E-78C465166C60}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -61,11 +61,11 @@
     <Compile Include="Assets\CameraMove.cs" />
     <Compile Include="Assets\Serial.cs" />
     <Compile Include="Assets\port.cs" />
+    <Compile Include="Assets\CatchManager.cs" />
     <Compile Include="Assets\control_label.cs" />
     <Compile Include="Assets\control_ball.cs" />
     <Compile Include="Assets\management.cs" />
     <Compile Include="Assets\CallPython.cs" />
-    <Compile Include="Assets\CatchManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\mirobot_urdf_2\CMakeLists.txt" />

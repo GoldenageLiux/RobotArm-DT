@@ -74,6 +74,7 @@ for i in range(3):
     PROP_BRIGHTNESS = cap[i].get(cv2.CAP_PROP_BRIGHTNESS)
     if PROP_BRIGHTNESS==0:
         myCap = cap[i]
+        break
 
 myCap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 myCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -81,9 +82,9 @@ myCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 # if __name__ == '__main__':
 #     while(True):
 #         ret, frame = myCap.read()
-# 
+#
 #         extract(frame, recognition_type)
-# 
+#
 #         if cv2.waitKey(10) & 0xFF == ord('q'):
 #             break
 

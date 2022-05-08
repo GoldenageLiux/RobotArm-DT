@@ -25,6 +25,12 @@ public class CatchManager : MonoBehaviour
         //机械臂初始XY坐标
         x = 240.0f;
         y = 130.0f;
+        //初始高度&夹爪角度
+        z = 130.0f;
+        r = -15.0f;
+
+        string msg = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
+        serial.GetComponent<Serial>().send_msg(msg);
     }
 
     // Update is called once per frame
@@ -39,12 +45,12 @@ public class CatchManager : MonoBehaviour
         if(status)
         {
 
-            serial.GetComponent<Serial>().send_msg("M3S40");
-
             status = false;
+            serial.GetComponent<Serial>().send_msg("M3S40");
 
             if (GetInfo(n))
             {
+                UnityEngine.Debug.Log(String.Format("Color: {0} Has Be Captured!!!\n0 is blue, 1 is green, 2 is red", n));
                 msg_que.Clear();
                 //获得色块位置
                 x = Convert.ToSingle(this.GetComponent<CallPython>().str[0]);
@@ -54,11 +60,6 @@ public class CatchManager : MonoBehaviour
                 GameObject cube = Instantiate(green_prefab) as GameObject;
                 cube.transform.position = new Vector3(x/1000.0f, 0, y/1000.0f);
                 
-
-                //初始高度&夹爪角度
-                z = 130.0f;
-                r = -40.0f;
-
                 //机械臂移动至色块位置
                 string msg_1 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
 
@@ -85,19 +86,24 @@ public class CatchManager : MonoBehaviour
                 cube.transform.SetParent(parent.transform, false);
                 Thread.Sleep(1000);
 
-                //送至对应色块目的位置
-                x = get_destination(n)[0];
-                y = get_destination(n)[1];
+                //夹爪上升高度至130
                 z = 130.0f;
                 string msg_4 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
                 serial.GetComponent<Serial>().send_msg(msg_4);
+                Thread.Sleep(1000);
+
+                //送至对应色块目的位置
+                x = get_destination(n)[0];
+                y = get_destination(n)[1];
+                string msg_5 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
+                serial.GetComponent<Serial>().send_msg(msg_5);
                 //msg_que.Enqueue(msg_4);
                 //Invoke("send_msg_later", 1);
                 Thread.Sleep(1000);
 
                 //松开夹爪
-                string msg_5 = "M3S40";
-                serial.GetComponent<Serial>().send_msg(msg_5);
+                string msg_6 = "M3S40";
+                serial.GetComponent<Serial>().send_msg(msg_6);
                 //msg_que.Enqueue(msg_5);
                 //Invoke("send_msg_later", 1);
                 cube.GetComponent<Rigidbody>().useGravity = true;

@@ -50,8 +50,8 @@ public class Serial : MonoBehaviour
 			}*/
 			//print(groups[1].Value);
 			status = groups[1].Value;
-			print(status);
-			print(status=="Idle");
+			//print(status);
+			//print(status=="Idle");
 			string[] joint = new string[7];
 			joint = groups[2].Value.Split(new char[]{ ','});
 			j1 = float.Parse(joint[4]);
@@ -103,7 +103,7 @@ public class Serial : MonoBehaviour
 	{
 		if (SerialPort.GetPortNames().Length != 0)
 		{
-			Serial.IMU_port = new SerialPort("COM7", 115200, Parity.None, 8, StopBits.One);
+			Serial.IMU_port = new SerialPort("COM8", 115200, Parity.None, 8, StopBits.One);
 		}
 		if (Serial.IMU_port == null)
 		{
@@ -137,7 +137,7 @@ public class Serial : MonoBehaviour
 	public void send_msg(string msg)
 	{
 		Serial.IMU_port.WriteLine(msg);
-		print("done");
+		//print("done");
 	}
 
 	public void ask()
