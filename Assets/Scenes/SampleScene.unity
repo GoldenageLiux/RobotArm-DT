@@ -2693,6 +2693,7 @@ MonoBehaviour:
   j5: 0
   j6: 0
   status: 
+  port: COM8
 --- !u!1 &279993268
 GameObject:
   m_ObjectHideFlags: 0
@@ -2855,6 +2856,9 @@ MonoBehaviour:
   serial: {fileID: 272670938}
   green_prefab: {fileID: 5642204292666583536, guid: b5884fdd8a638474cb51f4e8c9bc3c3f, type: 3}
   parent: {fileID: 1252035170}
+  arm: {fileID: 1916500068}
+  serial_script: {fileID: 0}
+  callpython: {fileID: 0}
 --- !u!4 &321539708
 Transform:
   m_ObjectHideFlags: 0

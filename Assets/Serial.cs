@@ -8,102 +8,37 @@ public class Serial : MonoBehaviour
 {
 	public float j1, j2, j3, j4, j5, j6;
 	public string status;
+	public string port = "COM8";
+	public Thread askThread;
 	// Token: 0x06000035 RID: 53 RVA: 0x00002ED8 File Offset: 0x000010D8
 	private void Awake()
 	{
 		this.OpenConnection();
-		//Serial.IMU_port.WriteLine("$h");
-		//Thread.Sleep(1000);
-		//Serial.IMU_port.ReadTimeout=500;
+		
+	}
+
+	private void Start()
+	{
+		askThread = new Thread(askFunc);
+		askThread.Start();
 	}
 
 	// Token: 0x06000036 RID: 54 RVA: 0x00002EE0 File Offset: 0x000010E0
 	private void FixedUpdate()
 	{
-		Serial.IMU_port.WriteLine("?");
-		//Thread.Sleep(1000);
-		string text = Serial.IMU_port.ReadExisting();
-		//print(text);
-		string[] array = new string[2];
-		if (text != null)
-		{
-			array = text.Split(new char[]
-			{
-					'\n'
-			});
-		}
-		text = array[0];
-		//���������ʽ����ƥ��
-		//<Idle,Angle(ABCDXYZ):0.000,0.000,0.000,0.000,0.000,0.000,0.000,Cartesian coordinate(XYZ RxRyRz):
-		//198.670,0.000,230.720,0.000,0.000,0.000,Pump PWM:0,Valve PWM:0,Motion_MODE:0>
-		var reg = new Regex(
-			@"<([^,]*),Angle\(ABCDXYZ\):([-\.\d,]*),Cartesian coordinate\(XYZ RxRyRz\):([-.\d,]*),Pump PWM:(\d+),Valve PWM:(\d+),Motion_MODE:(\d)>");
-		if (text.Contains("<") && text.Contains(">"))
-		{
-			Match match = reg.Match(text);
-			GroupCollection groups = match.Groups;
-			//print(groups.Count);
-			/*for (int i = 0; i < groups.Count; i++)
-			{
-				//print(reg.GroupNameFromNumber(i));
-				//print(groups[i].Value);
-			}*/
-			//print(groups[1].Value);
-			status = groups[1].Value;
-			//print(status);
-			//print(status=="Idle");
-			string[] joint = new string[7];
-			joint = groups[2].Value.Split(new char[]{ ','});
-			j1 = float.Parse(joint[4]);
-			j2 = float.Parse(joint[5]);
-			j3 = float.Parse(joint[6]);
-			j4 = float.Parse(joint[0]);
-			j5 = float.Parse(joint[1]);
-			j6 = float.Parse(joint[2]);
-			/*print(j1);
-			print(j2);
-			print(j3);
-			print(j4);
-			print(j5);
-			print(j6);*/
-			//print("end");
-		}
-		else
-		{
-			return;
-		}
 
-
-		/*try
-		{
-			string text = Serial.IMU_port.ReadLine();
-			Debug.Log(text);
-			string[] array = new string[4];
-			if (text != null)
-			{
-				array = text.Split(new char[]
-				{
-					','
-				});
-				for (int i = 0; i < 4; i++)
-				{
-					Serial._quat[i] = float.Parse(array[i]);
-				}
-				Serial._isUpdated = true;
-			}
-		}
-		catch (Exception ex)
-		{
-			Debug.LogException(ex);
-		}*/
 	}
 
+	private void OnDestroy()
+	{
+		askThread.Abort();
+	}
 	// Token: 0x06000037 RID: 55 RVA: 0x00002F54 File Offset: 0x00001154
 	public void OpenConnection()
 	{
 		if (SerialPort.GetPortNames().Length != 0)
 		{
-			Serial.IMU_port = new SerialPort("COM8", 115200, Parity.None, 8, StopBits.One);
+			Serial.IMU_port = new SerialPort(port, 115200, Parity.None, 8, StopBits.One);
 		}
 		if (Serial.IMU_port == null)
 		{
@@ -130,7 +65,6 @@ public class Serial : MonoBehaviour
 
 	public void add()
 	{
-		//string msg[];
 		Serial.IMU_port.WriteLine("M21 G90 G00 X15.00 Y0.00 Z0.00 A0.00 B0.00 C0.00 F2000.00");
 	}
 
@@ -142,12 +76,51 @@ public class Serial : MonoBehaviour
 
 	public void ask()
 	{
-		//string msg[];
 		Serial.IMU_port.WriteLine("?");
 		Thread.Sleep(500);
-		//string text = Serial.IMU_port.ReadLine();
 		string text = Serial.IMU_port.ReadExisting();
 		print(text);
+	}
+
+	public void askFunc()
+	{
+		while (true)
+		{
+			Debug.Log("asking!");
+			Thread.Sleep(100);
+			Serial.IMU_port.WriteLine("?");
+			//Thread.Sleep(1000);
+			string text = Serial.IMU_port.ReadExisting();
+			//print(text);
+			string[] array = new string[2];
+			if (text != null)
+			{
+				array = text.Split(new char[]
+				{
+					'\n'
+				});
+			}
+			text = array[0];
+
+			//<Idle,Angle(ABCDXYZ):0.000,0.000,0.000,0.000,0.000,0.000,0.000,Cartesian coordinate(XYZ RxRyRz):
+			//198.670,0.000,230.720,0.000,0.000,0.000,Pump PWM:0,Valve PWM:0,Motion_MODE:0>
+			var reg = new Regex(
+				@"<([^,]*),Angle\(ABCDXYZ\):([-\.\d,]*),Cartesian coordinate\(XYZ RxRyRz\):([-.\d,]*),Pump PWM:(\d+),Valve PWM:(\d+),Motion_MODE:(\d)>");
+			if (text.Contains("<") && text.Contains(">"))
+			{
+				Match match = reg.Match(text);
+				GroupCollection groups = match.Groups;
+				status = groups[1].Value;
+				string[] joint = new string[7];
+				joint = groups[2].Value.Split(new char[] { ',' });
+				j1 = float.Parse(joint[4]);
+				j2 = float.Parse(joint[5]);
+				j3 = float.Parse(joint[6]);
+				j4 = float.Parse(joint[0]);
+				j5 = float.Parse(joint[1]);
+				j6 = float.Parse(joint[2]);
+			}
+		}
 	}
 
 	// Token: 0x0400002E RID: 46
