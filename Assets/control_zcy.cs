@@ -19,7 +19,7 @@ public class control_zcy : MonoBehaviour
     public GameObject mode ;
 
     public GameObject label ;
-    public Thread set_target_thread;
+    //public Thread set_target_thread;
 
     Vector3 v1, v2, v3, v4, v5, v6;
     // Start is called before the first frame update
@@ -39,7 +39,7 @@ public class control_zcy : MonoBehaviour
 
     private void OnDestroy()
     {
-        set_target_thread.Abort();
+        //set_target_thread.Abort();
     }
 
     // Update is called once per frame
@@ -100,8 +100,7 @@ public class control_zcy : MonoBehaviour
             j3.GetComponent<ArticulationBody>().xDrive.target,
             j4.GetComponent<ArticulationBody>().xDrive.target,
             j5.GetComponent<ArticulationBody>().xDrive.target,
-            j6.GetComponent<ArticulationBody>().xDrive.target
-            );
+            j6.GetComponent<ArticulationBody>().xDrive.target );
         print(msg);
         Thread.Sleep(50);
         serial_.GetComponent<Serial>().send_msg(msg);
@@ -146,14 +145,6 @@ public class control_zcy : MonoBehaviour
         j.transform.localEulerAngles = v;
     }
 
-    //vector3 get_init(gameobject j)
-    //{
-    //    vector3 v;
-    //    v = j.transform.localeulerangles;
-    //    print(v);
-    //    return v;
-    //}
-
     void refresh2(GameObject j)
     {
         Vector3 v = v2;
@@ -180,8 +171,6 @@ public class control_zcy : MonoBehaviour
         ArticulationDrive currentDrive = j.GetComponent<ArticulationBody>().xDrive;
         //v = v + new Vector3(currentDrive.target, 0, 0);
         currentDrive.target = j_;
-        //print("success set");
-        //print(currentDrive.target);
         j.GetComponent<ArticulationBody>().xDrive = currentDrive;
         refresh1_3(j1);
         refresh2(j2);

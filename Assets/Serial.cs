@@ -89,9 +89,7 @@ public class Serial : MonoBehaviour
 			Debug.Log("asking!");
 			Thread.Sleep(100);
 			Serial.IMU_port.WriteLine("?");
-			//Thread.Sleep(1000);
 			string text = Serial.IMU_port.ReadExisting();
-			//print(text);
 			string[] array = new string[2];
 			if (text != null)
 			{

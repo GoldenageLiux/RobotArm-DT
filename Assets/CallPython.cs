@@ -16,7 +16,7 @@ public class CallPython : MonoBehaviour
     public string[] str;
     void Start()
     {
-        basePath = @"D:\unityprojects\RobotArm-DT\Assets\python\";
+        basePath = @"F:\Projects\unityprojects\RobotArm-DT\Assets\python\";
     }
  
     public void CallPythonAddHW(int a)
