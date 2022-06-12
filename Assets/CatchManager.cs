@@ -14,20 +14,27 @@ public class CatchManager : MonoBehaviour
 
     public GameObject serial;
     public GameObject green_prefab;
+    public GameObject blue_prefab;
+    public GameObject red_prefab;
     public GameObject parent;
     public GameObject arm;
     public Serial serial_script;
     public CallPython callpython;
+    private bool create_f, catch_f, release_f;
+    private GameObject now_cube;
 
     // Start is called before the first frame update
     void Start()
     {
+        create_f = false;
+        catch_f = false;
+        release_f = false;
         //机械臂初始XY坐标
         x = 240.0f;
         y = 130.0f;
         //初始高度&夹爪角度
         z = 130.0f;
-        r = 70.0f;
+        r = 0.0f;
 
         serial_script = serial.GetComponent<Serial>();
         callpython = this.GetComponent<CallPython>();
@@ -43,6 +50,41 @@ public class CatchManager : MonoBehaviour
     void Update()
     {
         StartCoroutine(arm.GetComponent<control_zcy>().set_all_target());
+        if (create_f)
+        {
+            if(n==0)
+            {
+                GameObject cube = Instantiate(blue_prefab) as GameObject;
+                now_cube = cube;
+            }
+            else if (n == 1)
+            {
+                GameObject cube = Instantiate(green_prefab) as GameObject;
+                now_cube = cube;
+            }
+            else
+            {
+                GameObject cube = Instantiate(red_prefab) as GameObject;
+                now_cube = cube;
+            }
+            now_cube.transform.position = new Vector3(x / 1000.0f, 0, y / 1000.0f);
+            create_f = false;
+        }
+        if (catch_f)
+        {
+            //now_cube.transform.position = new Vector3(0, 0.06f, 0);
+            //now_cube.transform.position = parent.transform.position;
+            now_cube.transform.position= new Vector3(parent.transform.position.x, parent.transform.position.y-0.03f, parent.transform.position.z);
+            now_cube.transform.parent = parent.transform;
+            
+            catch_f = false;
+        }
+        if(release_f)
+        {
+            now_cube.GetComponent<Rigidbody>().useGravity = true;
+            now_cube.transform.parent = serial.transform;
+            release_f = false;             
+        }
     }
 
     private void OnDestroy()
@@ -91,15 +133,16 @@ public class CatchManager : MonoBehaviour
             serial_script.send_msg("M3S40");
             if (GetInfo(n))
             {
+                
                 UnityEngine.Debug.Log(String.Format("Color: {0} Has Be Captured!!!\n0 is blue, 1 is green, 2 is red", n));
                     
                 //获得色块位置
                 x = Convert.ToSingle(callpython.str[0]);
                 y = Convert.ToSingle(callpython.str[1]);
                 callpython.str = null;
+                create_f = true;
 
-                //GameObject cube = Instantiate(green_prefab) as GameObject;
-                //cube.transform.position = new Vector3(x / 1000.0f, 0, y / 1000.0f);
+
 
                 //机械臂移动至色块位置
                 string msg_1 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
@@ -111,18 +154,20 @@ public class CatchManager : MonoBehaviour
                 z = 75.0f;
                 string msg_2 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
                 serial_script.send_msg(msg_2);
+                
                 Thread.Sleep(1000);
 
                 //夹爪抓取物块
                 string msg_3 = "M3S50";
                 serial_script.send_msg(msg_3);
+                
                 Thread.Sleep(1000);
-
+                catch_f = true;
                 //夹爪上升高度至130
                 z = 130.0f;
                 string msg_4 = String.Format("M20 G90 G00 X{0:N2} Y{1:N2} Z{2:N2} A0.00 B0.00 C{3:N2} F2000", x, y, z, r);
                 serial_script.send_msg(msg_4);
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
 
                 //送至对应色块目的位置
                 x = get_destination(n)[0];
@@ -135,7 +180,9 @@ public class CatchManager : MonoBehaviour
                 //松开夹爪
                 string msg_6 = "M3S40";
                 serial_script.send_msg(msg_6);
-                //cube.GetComponent<Rigidbody>().useGravity = true;
+                Thread.Sleep(1000);
+                release_f = true;
+                
             }
             else
             {

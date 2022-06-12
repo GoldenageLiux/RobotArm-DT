@@ -1,6 +1,11 @@
 ﻿using System;
 using Unity.Robotics;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Threading;
+
 
 namespace Unity.Robotics.UrdfImporter.Control
 {
@@ -9,6 +14,7 @@ namespace Unity.Robotics.UrdfImporter.Control
 
     public class Controller : MonoBehaviour
     {
+        
         private ArticulationBody[] articulationChain;
         // Stores original colors of the part being highlighted
         private Color[] prevColor;
@@ -29,9 +35,11 @@ namespace Unity.Robotics.UrdfImporter.Control
 
         [Tooltip("Color to highlight the currently selected join")]
         public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
+        
 
         void Start()
         {
+
             previousIndex = selectedIndex = 1;
             this.gameObject.AddComponent<FKRobot>();
             articulationChain = this.GetComponentsInChildren<ArticulationBody>();
@@ -47,6 +55,8 @@ namespace Unity.Robotics.UrdfImporter.Control
             }
             DisplaySelectedJoint(selectedIndex);
             StoreJointColors(selectedIndex);
+
+            
         }
 
         void SetSelectedJointIndex(int index)
@@ -142,14 +152,18 @@ namespace Unity.Robotics.UrdfImporter.Control
 
             if (moveDirection > 0)
             {
+                
+              
                 current.direction = RotationDirection.Positive;
             }
             else if (moveDirection < 0)
             {
+                
                 current.direction = RotationDirection.Negative;
             }
             else
             {
+                
                 current.direction = RotationDirection.None;
             }
         }

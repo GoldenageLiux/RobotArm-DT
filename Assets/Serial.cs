@@ -1,6 +1,5 @@
 ﻿using System.IO.Ports;
 using UnityEngine;
-using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -14,7 +13,7 @@ public class Serial : MonoBehaviour
 	private void Awake()
 	{
 		this.OpenConnection();
-		
+
 	}
 
 	private void Start()
@@ -95,7 +94,7 @@ public class Serial : MonoBehaviour
 			{
 				array = text.Split(new char[]
 				{
-					'\n'
+				'\n'
 				});
 			}
 			text = array[0];
@@ -134,3 +133,4 @@ public class Serial : MonoBehaviour
 	//private static int cnt = 0;
 
 }
+

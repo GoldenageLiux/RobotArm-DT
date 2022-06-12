@@ -32,14 +32,10 @@ public class control_zcy : MonoBehaviour
         v4 = new Vector3(0, 0, 90);
         v5 = new Vector3(-90, 0, 90);
         v6 = new Vector3(0, 0, 90);
-
-        //set_target_thread = new Thread(set_all_target);
-        //set_target_thread.Start();
     }
 
     private void OnDestroy()
     {
-        //set_target_thread.Abort();
     }
 
     // Update is called once per frame
@@ -56,13 +52,14 @@ public class control_zcy : MonoBehaviour
             refresh4_6(j6);
             if(Input.GetAxis("Vertical")!=0 || label.GetComponent<control_label>().flag)
             {
+                //serial_.GetComponent<Serial>().askThread.Abort();
                 print("updown");
                 set_status();
             }
             else
             {
+                //serial_.GetComponent<Serial>().askThread.Start();
                 StartCoroutine(set_all_target());
-                //Debug.Log("setting!");
             }
         }
 
@@ -104,6 +101,8 @@ public class control_zcy : MonoBehaviour
         print(msg);
         Thread.Sleep(50);
         serial_.GetComponent<Serial>().send_msg(msg);
+        //StartCoroutine(waitsec(msg));
+
     }
 
     public void set_status_flag_1()
@@ -178,5 +177,12 @@ public class control_zcy : MonoBehaviour
         refresh4_6(j4);
         refresh5(j5);
         refresh4_6(j6);
+    }
+
+    public IEnumerator waitsec(string msg)
+    {
+        yield return new WaitForSeconds(0.05f);
+        Debug.Log("send");
+        serial_.GetComponent<Serial>().send_msg(msg);
     }
 }

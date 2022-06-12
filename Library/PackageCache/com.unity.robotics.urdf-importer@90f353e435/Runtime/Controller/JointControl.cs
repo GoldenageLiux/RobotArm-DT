@@ -13,6 +13,7 @@ public class JointControl : MonoBehaviour
     public float torque ;
     public float acceleration;
     public ArticulationBody joint;
+    //private GameObject serial;
 
 
     void Start()
@@ -24,6 +25,7 @@ public class JointControl : MonoBehaviour
         speed = controller.speed;
         torque = controller.torque;
         acceleration = controller.acceleration;
+        //serial = GameObject.Find("Canvas");
     }
 
     void FixedUpdate(){
@@ -37,6 +39,7 @@ public class JointControl : MonoBehaviour
         {
             if (controltype == Unity.Robotics.UrdfImporter.Control.ControlType.PositionControl)
             {
+                //serial.GetComponent<Serial>().askThread.Stop();
                 ArticulationDrive currentDrive = joint.xDrive;
                 float newTargetDelta = (int)direction * Time.fixedDeltaTime * speed;
 
@@ -90,6 +93,11 @@ public class JointControl : MonoBehaviour
 
                 joint.xDrive = currentDrive;
 
+            }
+            else
+            {
+                //为了键盘控制时，停止孪生体问询，实现单方向的同步
+                //serial.GetComponent<Serial>().askThread.Start();
             }
         }
     }
