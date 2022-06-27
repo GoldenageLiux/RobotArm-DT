@@ -1,14 +1,10 @@
-import time
-
 import cv2
 import numpy as np
 import transform
-import sys
-
-recognition_type = sys.argv[1]
+import json
 
 def extract(img, n):  # 显示某颜色区域
-
+    positions_color = []
     hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
     # blue
@@ -41,55 +37,42 @@ def extract(img, n):  # 显示某颜色区域
     # cv2.imshow("4", thresh1)
     contours, hierarchy = cv2.findContours(thresh1, 1, 2)
     # print('len(contours):', len(contours))
-    temp = [0, 0]
     for i in range(0, len(contours)):
-        cnt = contours[i]
-        # print('cnt:', cnt)
-        area = cv2.contourArea(cnt)
-        # print('area:', area)
-        if area > temp[0]:
-            temp[0] = area
-            temp[1] = i
-        # print('kkkkk')
-    img3 = cv2.drawContours(img, contours, temp[1], (255, 0, 0), 3)
-    # cv2.imshow("end", img3)
+        cnt_max = contours[i]
+        x_max, y_max, w_max, h_max = cv2.boundingRect(cnt_max)
+        center_max_x = x_max + w_max / 2
+        center_max_y = y_max + h_max / 2
+        max_x_, max_y_ = transform.transform_xy(center_max_x, center_max_y)
 
-    cnt = contours[temp[1]]
-    x, y, w, h = cv2.boundingRect(cnt)
-    center_x = x + w / 2
-    center_y = y + h / 2
+        if max_x_ > 80 and max_x_ < 310 and max_y_ < 90 and max_y_ > -85:
+            positions_color.append([max_x_, max_y_])
+    return positions_color
 
-    x_,y_ = transform.transform_xy(center_x,center_y)
-    x_ = x_ - 5
-    y_  = y_ + 5
-    # 设置输出范围
-    if x_ > 110 and x_ < 310 and y_ < 140 and y_ > -100:
-        print( x_,',',y_)
+myCap = cv2.VideoCapture(0)
+# myCap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+# myCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
+# cap = []
+# for i in range(3):
+#     cap.append(cv2.VideoCapture(i))
+#     PROP_BRIGHTNESS = cap[i].get(cv2.CAP_PROP_BRIGHTNESS)
+#     if PROP_BRIGHTNESS==0:
+#         myCap = cap[i]
+        # break
+myCap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+myCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
+positions = {"blue": [], "green": [], "red": []}
 
-cap = []
-for i in range(3):
-    cap.append(cv2.VideoCapture(i))
-    PROP_BRIGHTNESS = cap[i].get(cv2.CAP_PROP_BRIGHTNESS)
-    if PROP_BRIGHTNESS==0:
-        myCap = cap[i]
-        break
+if __name__ == '__main__':
+    ret, frame = myCap.read()
 
-myCap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-myCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    positions["blue"] = extract(frame, "0")
+    positions["green"] = extract(frame, "1")
+    positions["red"] = extract(frame, "2")
 
-# if __name__ == '__main__':
-#     while(True):
-#         ret, frame = myCap.read()
-#
-#         extract(frame, recognition_type)
-#
-#         if cv2.waitKey(10) & 0xFF == ord('q'):
-#             break
+    positions_json = json.dumps(positions)  # 转化为json格式文件
 
-ret, frame = myCap.read()
-
-extract(frame, recognition_type)
-
-
+    # 将json文件保存为.json格式文件
+    with open('positions.json', 'w+') as file:
+        file.write(positions_json)

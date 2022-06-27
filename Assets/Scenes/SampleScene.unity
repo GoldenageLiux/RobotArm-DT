@@ -2819,13 +2819,14 @@ GameObject:
   - component: {fileID: 321539708}
   - component: {fileID: 321539707}
   - component: {fileID: 321539706}
+  - component: {fileID: 321539709}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &321539706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2860,7 +2861,11 @@ MonoBehaviour:
   parent: {fileID: 1252035170}
   arm: {fileID: 1916500068}
   serial_script: {fileID: 0}
-  callpython: {fileID: 0}
+  m_cube: []
+  color: 
+  posx_que: []
+  posy_que: []
+  index: 0
 --- !u!4 &321539708
 Transform:
   m_ObjectHideFlags: 0
@@ -2875,6 +2880,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &321539709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321539705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7309b2658f889af499472be8efe287a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blue_prefab: {fileID: 8102183678022587320, guid: 5f711bf0d7a897a48a5d6af5964b63f9, type: 3}
+  green_prefab: {fileID: 5642204292666583536, guid: b5884fdd8a638474cb51f4e8c9bc3c3f, type: 3}
+  red_prefab: {fileID: 1491111807832453544, guid: 7b4a6350a36551f42859e1643d79be5a, type: 3}
+  callpython: {fileID: 0}
+  cube_que: []
+  color_que: 
+  posx_que: []
+  posy_que: []
 --- !u!1 &348326206
 GameObject:
   m_ObjectHideFlags: 0
